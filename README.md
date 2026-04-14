@@ -2,19 +2,32 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# Libby - Perpustakaan Ebook Indonesia
 
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/5de4d8d3-cf17-4820-8b5e-34ecdcdd9eeb
+Libby is an Indonesian digital library and e-commerce platform for ebooks. It provides a clean interface for users to browse, purchase, and read digital books.
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
-
+**Prerequisites:**  Node.js 22 or higher.
 
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+   ```bash
+   npm install
+   ```
+2. Set up your environment variables (e.g. `GEMINI_API_KEY`) in `.env.local`.
+3. Run the application:
+   ```bash
+   npm run dev
+   ```
+
+## Deployment (GitHub Pages)
+
+This project is fully configured to automatically build and deploy to GitHub Pages using GitHub Actions whenever changes are pushed to the `main` branch.
+
+**To enable the live site:**
+1. Navigate to your repository on GitHub (`ridhoadilla/libby-frontend`).
+2. Click on the **Settings** tab.
+3. On the left sidebar, click on **Pages**.
+4. Under the "Build and deployment" section, change the **Source** dropdown to **GitHub Actions** (do not select Deploy from a branch or Jekyll).
+
+Once enabled, GitHub will automatically trigger the `.github/workflows/deploy.yml` action, and your site will be live at: `https://ridhoadilla.github.io/libby-frontend/`
