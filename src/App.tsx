@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, BookOpen, ShoppingCart, User, LogIn, LogOut, Filter, ChevronRight } from 'lucide-react';
+import { Search, BookOpen, ShoppingCart, User, LogIn, LogOut, Filter, ChevronRight, Github, Linkedin, Globe } from 'lucide-react';
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from './firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
@@ -18,6 +18,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [isAuthReady, setIsAuthReady] = useState(false);
+  const [currentView, setCurrentView] = useState<'home' | 'about'>('home');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -64,15 +65,15 @@ export default function App() {
     <div className="min-h-screen flex flex-col">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-warm-bg/80 backdrop-blur-md border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => setCurrentView('home')}>
           <BookOpen className="text-olive w-8 h-8" />
           <span className="text-2xl font-semibold tracking-tight text-olive">Libby</span>
         </div>
 
         <div className="hidden md:flex items-center gap-8 text-sm font-sans uppercase tracking-widest text-gray-600">
-          <a href="#" className="hover:text-olive transition-colors">Katalog</a>
+          <button onClick={() => setCurrentView('home')} className={`hover:text-olive transition-colors ${currentView === 'home' ? 'text-olive font-bold' : ''}`}>Katalog</button>
           <a href="#" className="hover:text-olive transition-colors">Populer</a>
-          <a href="#" className="hover:text-olive transition-colors">Tentang Kami</a>
+          <button onClick={() => setCurrentView('about')} className={`hover:text-olive transition-colors ${currentView === 'about' ? 'text-olive font-bold' : ''}`}>Tentang Kami</button>
         </div>
 
         <div className="flex items-center gap-4">
@@ -97,7 +98,9 @@ export default function App() {
       </nav>
 
       <main className="flex-grow">
-        {/* Hero Section */}
+        {currentView === 'home' ? (
+          <>
+            {/* Hero Section */}
         <section className="px-6 py-20 md:py-32 max-w-7xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -223,6 +226,43 @@ export default function App() {
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"></div>
           </div>
         </section>
+          </>
+        ) : (
+          <section className="px-6 py-20 bg-warm-bg min-h-[80vh] flex items-center justify-center">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="max-w-3xl mx-auto bg-white rounded-[32px] p-10 md:p-16 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100 w-full relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-64 h-64 bg-olive/10 rounded-full translate-x-1/3 -translate-y-1/3 blur-3xl"></div>
+              <div className="relative z-10 flex flex-col items-center text-center">
+                <div className="w-32 h-32 rounded-full overflow-hidden mb-6 border-4 border-olive/20 p-2 shadow-inner">
+                  <img src="https://github.com/ridhoadilla.png" alt="Ridho Nurul Adilla" className="w-full h-full object-cover rounded-full" />
+                </div>
+                <h1 className="text-3xl md:text-5xl font-medium mb-3">Ridho Nurul Adilla</h1>
+                <p className="text-olive font-sans tracking-widest uppercase text-sm font-semibold mb-8">Software Engineer & Developer</p>
+                
+                <p className="text-gray-600 font-sans leading-relaxed mb-10 max-w-lg text-lg">
+                  Hai! Saya Ridho, kreator di balik platform <span className="font-semibold text-gray-800">Libby</span>. 
+                  Saya sangat tertarik dalam membangun ekosistem digital yang cantik dan interaktif untuk memberikan pengalaman web terbaik bagi para pengguna.
+                </p>
+                
+                <div className="flex items-center gap-6">
+                  <a href="https://github.com/ridhoadilla" target="_blank" rel="noreferrer" className="w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center text-gray-600 hover:bg-olive hover:text-white transition-all hover:-translate-y-1 hover:shadow-lg">
+                    <Github className="w-6 h-6" />
+                  </a>
+                  <a href="https://linkedin.com/in/ridhoadilla" target="_blank" rel="noreferrer" className="w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center text-gray-600 hover:bg-olive hover:text-white transition-all hover:-translate-y-1 hover:shadow-lg">
+                    <Linkedin className="w-6 h-6" />
+                  </a>
+                  <a href="https://rirula.my.id" target="_blank" rel="noreferrer" className="w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center text-gray-600 hover:bg-olive hover:text-white transition-all hover:-translate-y-1 hover:shadow-lg">
+                    <Globe className="w-6 h-6" />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </section>
+        )}
       </main>
 
       <footer className="bg-white border-t border-gray-100 px-6 py-12">
