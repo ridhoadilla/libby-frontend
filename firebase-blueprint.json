@@ -1,0 +1,70 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "name": { "type": "string", "description": "Full name" },
+        "email": { "type": "string", "format": "email", "description": "Email address" },
+        "role": { "type": "string", "enum": ["admin", "user"], "description": "User role" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["uid", "name", "email", "role", "createdAt"]
+    },
+    "Book": {
+      "title": "Book",
+      "description": "Ebook details",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Book title" },
+        "author": { "type": "string", "description": "Author name" },
+        "description": { "type": "string", "description": "Book description" },
+        "price": { "type": "number", "description": "Price in IDR" },
+        "coverUrl": { "type": "string", "format": "uri", "description": "URL to cover image" },
+        "category": { "type": "string", "description": "Book category" },
+        "stock": { "type": "number", "description": "Available stock" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["title", "author", "price", "category", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Purchase order",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the buyer" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bookId": { "type": "string" },
+              "quantity": { "type": "number" },
+              "price": { "type": "number" }
+            }
+          }
+        },
+        "totalAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "completed", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "items", "totalAmount", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/books/{bookId}": {
+      "schema": "Book",
+      "description": "Ebook catalog"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Customer orders"
+    }
+  }
+}
