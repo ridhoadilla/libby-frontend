@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, BookOpen, ShoppingCart, User, LogIn, LogOut, Filter, ChevronRight, Github, Linkedin, Globe } from 'lucide-react';
+import { Search, BookOpen, ShoppingCart, User, LogIn, LogOut, Filter, ChevronRight, Github, Linkedin, Globe, Mail, Phone, MapPin, Send } from 'lucide-react';
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from './firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
@@ -18,7 +18,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [isAuthReady, setIsAuthReady] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'about'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'about' | 'contact'>('home');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -74,6 +74,7 @@ export default function App() {
           <button onClick={() => setCurrentView('home')} className={`hover:text-olive transition-colors ${currentView === 'home' ? 'text-olive font-bold' : ''}`}>Katalog</button>
           <a href="#" className="hover:text-olive transition-colors">Populer</a>
           <button onClick={() => setCurrentView('about')} className={`hover:text-olive transition-colors ${currentView === 'about' ? 'text-olive font-bold' : ''}`}>Tentang Kami</button>
+          <button onClick={() => setCurrentView('contact')} className={`hover:text-olive transition-colors ${currentView === 'contact' ? 'text-olive font-bold' : ''}`}>Hubungi Kami</button>
         </div>
 
         <div className="flex items-center gap-4">
@@ -227,7 +228,7 @@ export default function App() {
           </div>
         </section>
           </>
-        ) : (
+        ) : currentView === 'about' ? (
           <section className="px-6 py-20 bg-warm-bg min-h-[80vh] flex items-center justify-center">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
@@ -262,6 +263,108 @@ export default function App() {
               </div>
             </motion.div>
           </section>
+        ) : (
+          <section className="px-6 py-20 bg-warm-bg min-h-[80vh] flex items-center justify-center">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="max-w-5xl mx-auto w-full"
+            >
+              <div className="text-center mb-12">
+                <h1 className="text-4xl md:text-5xl font-medium mb-4">Hubungi Kami</h1>
+                <p className="text-gray-600 font-sans max-w-2xl mx-auto text-lg">
+                  Punya pertanyaan tentang Libby? Ingin bekerja sama atau melaporkan masalah? 
+                  Jangan ragu untuk menghubungi kami. Tim kami siap membantu Anda!
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white rounded-[32px] overflow-hidden shadow-sm border border-gray-100">
+                {/* Contact Information */}
+                <div className="bg-olive p-10 md:p-12 text-white relative overflow-hidden flex flex-col justify-between">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-1/3 -translate-y-1/3 blur-3xl"></div>
+                  <div className="relative z-10">
+                    <h3 className="text-2xl font-medium mb-8">Informasi Kontak</h3>
+                    <div className="space-y-8 font-sans">
+                      <div className="flex items-start gap-4 hover:translate-x-2 transition-transform duration-300">
+                        <MapPin className="w-6 h-6 mt-1 flex-shrink-0" />
+                        <div>
+                          <p className="font-semibold text-lg mb-1">Alamat Kantor</p>
+                          <p className="text-white/80 leading-relaxed">Jl. Jend. Sudirman No. 123,<br/>Jakarta Selatan, Indonesia 12190</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 hover:translate-x-2 transition-transform duration-300">
+                        <Phone className="w-6 h-6 flex-shrink-0" />
+                        <div>
+                          <p className="font-semibold text-lg mb-1">Telepon</p>
+                          <p className="text-white/80">+62 21 5555 1234</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 hover:translate-x-2 transition-transform duration-300">
+                        <Mail className="w-6 h-6 flex-shrink-0" />
+                        <div>
+                          <p className="font-semibold text-lg mb-1">Email</p>
+                          <p className="text-white/80">halo@libby.co.id</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="relative z-10 mt-12">
+                    <p className="font-sans text-sm text-white/60 mb-4">Temukan kami di sosial media</p>
+                    <div className="flex gap-4">
+                      <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-olive transition-colors">
+                        <Linkedin className="w-5 h-5" />
+                      </a>
+                      <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-olive transition-colors">
+                        <Github className="w-5 h-5" />
+                      </a>
+                      <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-olive transition-colors">
+                        <Globe className="w-5 h-5" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contact Form */}
+                <div className="p-10 md:py-12 md:pr-12 md:pl-6 flex flex-col justify-center">
+                  <h3 className="text-2xl font-medium mb-8 text-gray-800">Kirim Pesan</h3>
+                  <form className="space-y-6 font-sans" onSubmit={(e) => e.preventDefault()}>
+                    <div className="space-y-5">
+                      <div className="group">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-olive transition-colors">Nama Lengkap</label>
+                        <input 
+                          type="text" 
+                          placeholder="Masukkan nama Anda" 
+                          className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:outline-none focus:border-olive focus:ring-1 focus:ring-olive transition-all bg-gray-50 focus:bg-white"
+                        />
+                      </div>
+                      <div className="group">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-olive transition-colors">Alamat Email</label>
+                        <input 
+                          type="email" 
+                          placeholder="nama@email.com" 
+                          className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:outline-none focus:border-olive focus:ring-1 focus:ring-olive transition-all bg-gray-50 focus:bg-white"
+                        />
+                      </div>
+                      <div className="group">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-olive transition-colors">Pesan</label>
+                        <textarea 
+                          rows={4}
+                          placeholder="Tulis pesan Anda di sini..." 
+                          className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:outline-none focus:border-olive focus:ring-1 focus:ring-olive transition-all resize-none bg-gray-50 focus:bg-white"
+                        ></textarea>
+                      </div>
+                    </div>
+                    <button type="submit" className="w-full bg-olive text-white py-4 mt-2 rounded-xl font-semibold hover:bg-olive/90 flex items-center justify-center gap-2 transition-all hover:shadow-lg hover:-translate-y-1 active:translate-y-0">
+                      <Send className="w-5 h-5" />
+                      Kirim Pesan Sekarang
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </motion.div>
+          </section>
         )}
       </main>
 
@@ -275,7 +378,7 @@ export default function App() {
           <div className="flex gap-8 text-xs font-sans uppercase tracking-widest text-gray-400">
             <a href="#" className="hover:text-olive transition-colors">Syarat & Ketentuan</a>
             <a href="#" className="hover:text-olive transition-colors">Kebijakan Privasi</a>
-            <a href="#" className="hover:text-olive transition-colors">Hubungi Kami</a>
+            <button onClick={() => { window.scrollTo(0,0); setCurrentView('contact'); }} className="hover:text-olive transition-colors uppercase tracking-widest text-xs">Hubungi Kami</button>
           </div>
 
           <p className="text-gray-400 text-sm font-sans">
