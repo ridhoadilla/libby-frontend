@@ -266,7 +266,7 @@ export default function App() {
               </div>
             </motion.div>
           </section>
-        ) : (
+        ) : currentView === 'contact' ? (
           <section className="px-6 py-20 bg-warm-bg min-h-[80vh] flex items-center justify-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -492,7 +492,7 @@ export default function App() {
               </div>
             </motion.div>
           </section>
-        )}
+        ) : null}
       </main>
 
       <footer className="bg-white border-t border-gray-100 px-6 py-12">
