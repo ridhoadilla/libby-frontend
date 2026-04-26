@@ -7,7 +7,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, BookOpen, ShoppingCart, User, LogIn, LogOut, Filter, ChevronRight, Github, Linkedin, Globe, Mail, Phone, MapPin, Send } from 'lucide-react';
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from './firebase';
-import { signInWithRedirect, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { Book } from './types';
 import { seedDatabase } from './db/seed';
@@ -22,6 +22,12 @@ export default function App() {
   const [currentView, setCurrentView] = useState<'home' | 'about' | 'contact' | 'terms' | 'privacy' | 'admin'>('home');
 
   useEffect(() => {
+    // Catch errors from redirect sign in
+    getRedirectResult(auth).catch(error => {
+      console.error("Firebase Redirect Error:", error);
+      alert("Gagal Masuk: " + error.message);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setIsAuthReady(true);
