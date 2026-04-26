@@ -93,8 +93,9 @@ export default function App() {
           {user ? (
             <div className="flex items-center gap-3">
               <img src={user.photoURL || ''} alt={user.displayName || ''} className="w-8 h-8 rounded-full border border-olive" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
-              <button onClick={handleLogout} className="text-gray-600 hover:text-olive transition-colors">
-                <LogOut className="w-5 h-5" />
+              <button onClick={handleLogout} className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-full text-sm font-sans font-medium hover:bg-red-100 transition-colors">
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Keluar</span>
               </button>
             </div>
           ) : (
