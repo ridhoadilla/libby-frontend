@@ -203,7 +203,7 @@ export default function App() {
                 ) : (
                   <div className="text-center py-20">
                     <p className="text-gray-400 font-sans text-lg">Tidak ada buku yang ditemukan.</p>
-                    {books.length === 0 && (
+                    {books.length === 0 && user?.email?.toLowerCase() === 'ridhonuruladilla@gmail.com' && (
                       <button
                         onClick={seedDatabase}
                         className="mt-4 text-olive underline font-sans"
