@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, BookOpen, ShoppingCart, User, LogIn, LogOut, Filter, ChevronRight, Github, Linkedin, Globe, Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Search, BookOpen, ShoppingCart, User, LogIn, LogOut, Filter, ChevronRight, Github, Linkedin, Globe, Mail, Phone, MapPin, Send, AlertTriangle, X } from 'lucide-react';
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from './firebase';
 import { signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
@@ -14,6 +14,27 @@ import { seedDatabase } from './db/seed';
 import AdminPanel from './components/AdminPanel';
 
 export default function App() {
+  const getHttpErrorCode = (firebaseErrorCode: string): number => {
+    switch (firebaseErrorCode) {
+      case 'auth/invalid-credential':
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        return 401; // Unauthorized
+      case 'auth/user-disabled':
+        return 403; // Forbidden
+      case 'auth/too-many-requests':
+        return 429; // Too Many Requests
+      case 'auth/network-request-failed':
+        return 503; // Service Unavailable
+      case 'auth/popup-closed-by-user':
+      case 'auth/cancelled-popup-request':
+        return 499; // Client Closed Request
+      default:
+        return 500; // Internal Server Error
+    }
+  };
+
+  const [authError, setAuthError] = useState<{code: number, message: string} | null>(null);
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [books, setBooks] = useState<Book[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,9 +44,10 @@ export default function App() {
 
   useEffect(() => {
     // Catch errors from redirect sign in
-    getRedirectResult(auth).catch(error => {
+    getRedirectResult(auth).catch((error: any) => {
       console.error("Firebase Redirect Error:", error);
-      alert("Gagal Masuk: " + error.message);
+      const code = getHttpErrorCode(error.code);
+      setAuthError({ code, message: error.message || "Terjadi kesalahan saat masuk menggunakan Google." });
     });
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -51,9 +73,12 @@ export default function App() {
 
   const handleLogin = async () => {
     try {
+      setAuthError(null);
       await signInWithRedirect(auth, googleProvider);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login Error:", error);
+      const code = getHttpErrorCode(error.code);
+      setAuthError({ code, message: error.message || "Gagal menginisiasi proses masuk." });
     }
   };
 
@@ -110,6 +135,28 @@ export default function App() {
           </button>
         </div>
       </nav>
+
+      <AnimatePresence>
+        {authError && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] bg-white border border-red-100 px-6 py-4 rounded-[20px] shadow-[0_10px_40px_rgba(220,38,38,0.15)] flex items-start gap-4 max-w-md w-full mx-4"
+          >
+            <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center flex-shrink-0 text-red-500">
+              <span className="font-bold font-sans text-lg">{authError.code}</span>
+            </div>
+            <div className="flex-grow pt-1 font-sans">
+              <p className="font-bold text-gray-800 mb-1">Gagal Masuk</p>
+              <p className="text-sm text-gray-500 leading-relaxed">{authError.message}</p>
+            </div>
+            <button onClick={() => setAuthError(null)} className="text-gray-400 hover:text-gray-800 transition-colors p-1 bg-gray-50 hover:bg-gray-100 rounded-full">
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <main className="flex-grow">
         {currentView === 'home' ? (
