@@ -84,7 +84,7 @@ export default function App() {
           <a href="#" className="hover:text-olive transition-colors">Populer</a>
           <button onClick={() => setCurrentView('about')} className={`hover:text-olive transition-colors ${currentView === 'about' ? 'text-olive font-bold' : ''}`}>Tentang Kami</button>
           <button onClick={() => setCurrentView('contact')} className={`hover:text-olive transition-colors ${currentView === 'contact' ? 'text-olive font-bold' : ''}`}>Hubungi Kami</button>
-          {user?.email === 'ridhonuruladilla@gmail.com' && (
+          {user?.email?.toLowerCase() === 'ridhonuruladilla@gmail.com' && (
             <button onClick={() => setCurrentView('admin')} className={`hover:text-olive transition-colors ${currentView === 'admin' ? 'text-olive font-bold' : ''}`}>Admin</button>
           )}
         </div>
@@ -502,7 +502,7 @@ export default function App() {
               </div>
             </motion.div>
           </section>
-        ) : currentView === 'admin' && user?.email === 'ridhonuruladilla@gmail.com' ? (
+        ) : currentView === 'admin' && user?.email?.toLowerCase() === 'ridhonuruladilla@gmail.com' ? (
           <AdminPanel books={books} />
         ) : null}
       </main>
