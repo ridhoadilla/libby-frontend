@@ -11,6 +11,7 @@ import { signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } fr
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { Book } from './types';
 import { seedDatabase } from './db/seed';
+import AdminPanel from './components/AdminPanel';
 
 export default function App() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -18,7 +19,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [isAuthReady, setIsAuthReady] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'about' | 'contact' | 'terms' | 'privacy'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'about' | 'contact' | 'terms' | 'privacy' | 'admin'>('home');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -77,6 +78,9 @@ export default function App() {
           <a href="#" className="hover:text-olive transition-colors">Populer</a>
           <button onClick={() => setCurrentView('about')} className={`hover:text-olive transition-colors ${currentView === 'about' ? 'text-olive font-bold' : ''}`}>Tentang Kami</button>
           <button onClick={() => setCurrentView('contact')} className={`hover:text-olive transition-colors ${currentView === 'contact' ? 'text-olive font-bold' : ''}`}>Hubungi Kami</button>
+          {user?.email === 'ridhonuruladilla@gmail.com' && (
+            <button onClick={() => setCurrentView('admin')} className={`hover:text-olive transition-colors ${currentView === 'admin' ? 'text-olive font-bold' : ''}`}>Admin</button>
+          )}
         </div>
 
         <div className="flex items-center gap-4">
@@ -492,6 +496,8 @@ export default function App() {
               </div>
             </motion.div>
           </section>
+        ) : currentView === 'admin' && user?.email === 'ridhonuruladilla@gmail.com' ? (
+          <AdminPanel books={books} />
         ) : null}
       </main>
 
