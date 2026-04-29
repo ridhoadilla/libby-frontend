@@ -31,3 +31,5 @@ This project is fully configured to automatically build and deploy to GitHub Pag
 4. Under the "Build and deployment" section, change the **Source** dropdown to **GitHub Actions** (do not select Deploy from a branch or Jekyll).
 
 Once enabled, GitHub will automatically trigger the `.github/workflows/deploy.yml` action, and your site will be live at: `https://ridhoadilla.github.io/libby-frontend/`
+
+## Created by ridho nurul adilla
