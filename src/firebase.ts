@@ -2,15 +2,21 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy, limit, getDocFromServer } from 'firebase/firestore';
 
-// Placeholder configuration. 
-// In a real setup, this would be in firebase-applet-config.json
+// Firebase configuration from environment variables
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'demo-api-key',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'demo-project.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'demo-project',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'demo-project.appspot.com',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '123456789',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:123456789:web:abc123'
+};
+
+// Check if Firebase is properly configured
+const isFirebaseConfigured = () => {
+  return import.meta.env.VITE_FIREBASE_API_KEY && 
+         import.meta.env.VITE_FIREBASE_PROJECT_ID &&
+         !import.meta.env.VITE_FIREBASE_API_KEY?.includes('your_');
 };
 
 const app = initializeApp(firebaseConfig);
@@ -21,6 +27,7 @@ setPersistence(auth, browserLocalPersistence)
   });
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
+export { isFirebaseConfigured };
 
 export enum OperationType {
   CREATE = 'create',

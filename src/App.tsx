@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, BookOpen, ShoppingCart, User, LogIn, LogOut, Filter, ChevronRight, Github, Linkedin, Globe, Mail, Phone, MapPin, Send, AlertTriangle, X } from 'lucide-react';
-import { auth, db, googleProvider, handleFirestoreError, OperationType } from './firebase';
+import { auth, db, googleProvider, handleFirestoreError, OperationType, isFirebaseConfigured } from './firebase';
 import { signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { Book } from './types';
@@ -74,6 +74,16 @@ export default function App() {
   const handleLogin = async () => {
     try {
       setAuthError(null);
+      
+      // Check if Firebase is properly configured
+      if (!isFirebaseConfigured()) {
+        setAuthError({ 
+          code: 500, 
+          message: "Firebase belum dikonfigurasi. Silakan buat file .env dengan kredensial Firebase Anda." 
+        });
+        return;
+      }
+      
       await signInWithRedirect(auth, googleProvider);
     } catch (error: any) {
       console.error("Login Error:", error);
@@ -109,9 +119,7 @@ export default function App() {
           <a href="#" className="hover:text-olive transition-colors">Populer</a>
           <button onClick={() => setCurrentView('about')} className={`hover:text-olive transition-colors ${currentView === 'about' ? 'text-olive font-bold' : ''}`}>Tentang Kami</button>
           <button onClick={() => setCurrentView('contact')} className={`hover:text-olive transition-colors ${currentView === 'contact' ? 'text-olive font-bold' : ''}`}>Hubungi Kami</button>
-          {user?.email?.toLowerCase() === 'ridhonuruladilla@gmail.com' && (
-            <button onClick={() => setCurrentView('admin')} className={`hover:text-olive transition-colors ${currentView === 'admin' ? 'text-olive font-bold' : ''}`}>Admin</button>
-          )}
+          <button onClick={() => setCurrentView('admin')} className={`hover:text-olive transition-colors ${currentView === 'admin' ? 'text-olive font-bold' : ''}`}>Admin</button>
         </div>
 
         <div className="flex items-center gap-4">
@@ -550,7 +558,7 @@ export default function App() {
               </div>
             </motion.div>
           </section>
-        ) : currentView === 'admin' && user?.email?.toLowerCase() === 'ridhonuruladilla@gmail.com' ? (
+        ) : currentView === 'admin' && user ? (
           <AdminPanel books={books} />
         ) : null}
       </main>
