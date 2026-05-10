@@ -13,6 +13,20 @@ import { Book } from './types';
 import { seedDatabase } from './db/seed';
 import AdminPanel from './components/AdminPanel';
 
+const getUserInitials = (name: string | null, email: string | null) => {
+  if (name) {
+    const parts = name.trim().split(' ');
+    if (parts.length > 1) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
+  if (email) {
+    return email.substring(0, 2).toUpperCase();
+  }
+  return 'U';
+};
+
 export default function App() {
   const getHttpErrorCode = (firebaseErrorCode: string): number => {
     switch (firebaseErrorCode) {
@@ -137,7 +151,12 @@ export default function App() {
         <div className="flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-3">
-              <img src={user.photoURL || ''} alt={user.displayName || ''} className="w-8 h-8 rounded-full border border-olive" referrerPolicy="no-referrer" loading="lazy" decoding="async" />
+              <div 
+                className="w-9 h-9 rounded-full bg-olive text-white flex items-center justify-center font-sans font-bold text-sm shadow-sm ring-2 ring-white"
+                title={user.displayName || user.email || 'User'}
+              >
+                {getUserInitials(user.displayName, user.email)}
+              </div>
               <button onClick={handleLogout} className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-full text-sm font-sans font-medium hover:bg-red-100 transition-colors">
                 <LogOut className="w-4 h-4" />
                 <span className="hidden sm:inline">Keluar</span>
