@@ -62,6 +62,13 @@ export default function App() {
   useEffect(() => {
     if (!isAuthReady) return;
 
+    // Restore intended view after login
+    const intendedView = localStorage.getItem('intendedView');
+    if (intendedView) {
+      setCurrentView(intendedView as any);
+      localStorage.removeItem('intendedView');
+    }
+
     const q = query(collection(db, 'books'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const booksData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Book));
@@ -85,6 +92,9 @@ export default function App() {
         });
         return;
       }
+      
+      // Save the current view so we can return to it after login
+      localStorage.setItem('intendedView', currentView);
       
       await signInWithRedirect(auth, googleProvider);
     } catch (error: any) {
@@ -121,9 +131,7 @@ export default function App() {
           <a href="#" className="hover:text-olive transition-colors">Populer</a>
           <button onClick={() => setCurrentView('about')} className={`hover:text-olive transition-colors ${currentView === 'about' ? 'text-olive font-bold' : ''}`}>Tentang Kami</button>
           <button onClick={() => setCurrentView('contact')} className={`hover:text-olive transition-colors ${currentView === 'contact' ? 'text-olive font-bold' : ''}`}>Hubungi Kami</button>
-          {isAdmin && (
-            <button onClick={() => setCurrentView('admin')} className={`hover:text-olive transition-colors ${currentView === 'admin' ? 'text-olive font-bold' : ''}`}>Admin</button>
-          )}
+          <button onClick={() => setCurrentView('admin')} className={`hover:text-olive transition-colors ${currentView === 'admin' ? 'text-olive font-bold' : ''}`}>Admin</button>
         </div>
 
         <div className="flex items-center gap-4">
