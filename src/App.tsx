@@ -42,6 +42,8 @@ export default function App() {
   const [isAuthReady, setIsAuthReady] = useState(false);
   const [currentView, setCurrentView] = useState<'home' | 'about' | 'contact' | 'terms' | 'privacy' | 'admin'>('home');
 
+  const isAdmin = user?.email?.toLowerCase() === 'ridhonuruladilla@gmail.com';
+
   useEffect(() => {
     // Catch errors from redirect sign in
     getRedirectResult(auth).catch((error: any) => {
@@ -119,7 +121,9 @@ export default function App() {
           <a href="#" className="hover:text-olive transition-colors">Populer</a>
           <button onClick={() => setCurrentView('about')} className={`hover:text-olive transition-colors ${currentView === 'about' ? 'text-olive font-bold' : ''}`}>Tentang Kami</button>
           <button onClick={() => setCurrentView('contact')} className={`hover:text-olive transition-colors ${currentView === 'contact' ? 'text-olive font-bold' : ''}`}>Hubungi Kami</button>
-          <button onClick={() => setCurrentView('admin')} className={`hover:text-olive transition-colors ${currentView === 'admin' ? 'text-olive font-bold' : ''}`}>Admin</button>
+          {isAdmin && (
+            <button onClick={() => setCurrentView('admin')} className={`hover:text-olive transition-colors ${currentView === 'admin' ? 'text-olive font-bold' : ''}`}>Admin</button>
+          )}
         </div>
 
         <div className="flex items-center gap-4">
@@ -259,7 +263,7 @@ export default function App() {
                 ) : (
                   <div className="text-center py-20">
                     <p className="text-gray-400 font-sans text-lg">Tidak ada buku yang ditemukan.</p>
-                    {books.length === 0 && user?.email?.toLowerCase() === 'ridhonuruladilla@gmail.com' && (
+                    {books.length === 0 && isAdmin && (
                       <button
                         onClick={seedDatabase}
                         className="mt-4 text-olive underline font-sans"
@@ -558,8 +562,33 @@ export default function App() {
               </div>
             </motion.div>
           </section>
-        ) : currentView === 'admin' && user ? (
-          <AdminPanel books={books} />
+        ) : currentView === 'admin' ? (
+          isAdmin ? (
+            <AdminPanel books={books} />
+          ) : user ? (
+            <div className="text-center py-32 px-6">
+              <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+              <h2 className="text-3xl font-medium mb-4">Akses Ditolak</h2>
+              <p className="text-gray-600 font-sans max-w-md mx-auto mb-8">
+                Halaman ini khusus untuk administrator. Akun <b>{user.email}</b> tidak memiliki izin untuk mengakses halaman ini.
+              </p>
+              <button onClick={() => setCurrentView('home')} className="bg-olive text-white px-8 py-3 rounded-full font-sans font-medium hover:opacity-90 transition-opacity">
+                Kembali ke Beranda
+              </button>
+            </div>
+          ) : (
+            <div className="text-center py-32 px-6">
+              <LogIn className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h2 className="text-3xl font-medium mb-4">Login Diperlukan</h2>
+              <p className="text-gray-600 font-sans max-w-md mx-auto mb-8">
+                Silakan login sebagai administrator untuk mengakses panel admin.
+              </p>
+              <button onClick={handleLogin} className="bg-olive text-white px-8 py-3 rounded-full font-sans font-medium hover:opacity-90 transition-opacity flex items-center gap-2 mx-auto">
+                <LogIn className="w-5 h-5" />
+                Masuk dengan Google
+              </button>
+            </div>
+          )
         ) : null}
       </main>
 
