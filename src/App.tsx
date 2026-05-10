@@ -181,7 +181,9 @@ export default function App() {
           <a href="#" className="hover:text-olive transition-colors">Populer</a>
           <button onClick={() => setCurrentView('about')} className={`hover:text-olive transition-colors ${currentView === 'about' ? 'text-olive font-bold' : ''}`}>Tentang Kami</button>
           <button onClick={() => setCurrentView('contact')} className={`hover:text-olive transition-colors ${currentView === 'contact' ? 'text-olive font-bold' : ''}`}>Hubungi Kami</button>
-          <button onClick={() => setCurrentView('admin')} className={`hover:text-olive transition-colors ${currentView === 'admin' ? 'text-olive font-bold' : ''}`}>Admin</button>
+          {isAdmin && (
+            <button onClick={() => setCurrentView('admin')} className={`hover:text-olive transition-colors ${currentView === 'admin' ? 'text-olive font-bold' : ''}`}>Admin</button>
+          )}
         </div>
 
         <div className="flex items-center gap-4">
